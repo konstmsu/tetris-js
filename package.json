@@ -1,0 +1,17 @@
+{
+  "name": "tetris",
+  "version": "0.0.0",
+  "main": "tetris.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.36",
+    "@types/lodash": "^4.14.172"
+  }
+}
