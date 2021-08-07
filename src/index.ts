@@ -1,5 +1,5 @@
-import _ from "lodash";
-import { Promise } from "bluebird";
+import * as _ from "lodash";
+import { delay } from "./utils";
 
 interface XY {
   x: number;
@@ -144,7 +144,7 @@ class Game {
 
   startFalling = async () => {
     for (;;) {
-      await Promise.delay(1000);
+      await delay(1000);
       const move = this.fallingFigure.createMove({ x: 0, y: -1 });
       if (move.isPossible) {
         move.perform();
