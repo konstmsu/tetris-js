@@ -8,6 +8,7 @@ export const renderAsLines = (field: Field): string[] => {
   for (const { x, y } of field.fallingFigure.blocks) {
     body[y]![x] = "*";
   }
+  body.reverse();
 
   const result: string[] = [];
 
