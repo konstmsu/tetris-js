@@ -1,3 +1,4 @@
+import { max } from "lodash";
 import { XY } from "./core";
 
 export class Figure {
@@ -6,7 +7,7 @@ export class Figure {
   constructor(...baseViewLines: string[]) {
     this.blocks = baseViewLines
       .flatMap((line, y) => [...line].map((c, x) => ({ c, x, y })))
-      .filter(({ c }) => c == "*")
+      .filter(({ c }) => c === "*")
       .map(({ x, y }) => ({ x, y }));
   }
 
