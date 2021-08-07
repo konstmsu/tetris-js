@@ -1,10 +1,7 @@
-import * as _ from "lodash";
+import _ from "lodash";
+import { XY } from "./core";
+import { Figure, FigureOnField } from "./figure";
 import { delay } from "./utils";
-
-interface XY {
-  x: number;
-  y: number;
-}
 
 class Field {
   data: string[][];
@@ -26,57 +23,14 @@ class Field {
   };
 }
 
-class FigureTemplate {
-  baseViewLines: string[];
-
-  constructor(baseView: string) {
-    this.baseViewLines = baseView.split("\n");
-  }
-
-  *blocks() {
-    let y = 0;
-    for (const line of this.baseViewLines) {
-      let x = 0;
-      for (const c of line) {
-        if (c === "*") yield { x, y };
-        x += 1;
-      }
-      y += 1;
-    }
-  }
-
-  static T = new FigureTemplate("***\n *");
-  static O = new FigureTemplate("**\n**");
-  static S = new FigureTemplate("**\n **");
-  static I = new FigureTemplate("****");
-}
-
-class RotatableFigure {
-  figureTemplate: FigureTemplate;
-  rotations: number;
-
-  constructor(figureTemplate: FigureTemplate) {
-    this.figureTemplate = figureTemplate;
-    this.rotations = 0;
-  }
-
-  applyRotation = ({ x, y }: XY) => {
-    return { x, y };
-  };
-
-  *blocks() {
-    return [...this.figureTemplate.blocks()].map(this.applyRotation);
-  }
-}
-
 class Move {
   field: Field;
-  rotatableFigure: RotatableFigure;
+  rotatableFigure: FigureOnField;
   targetPosition: XY;
 
   constructor(
     field: Field,
-    rotatableFigure: RotatableFigure,
+    rotatableFigure: FigureOnField,
     targetPosition: XY
   ) {
     this.field = field;
@@ -100,16 +54,16 @@ class MovableFigure {
     throw new Error("Method not implemented.");
   }
 
-  figure: RotatableFigure;
+  figure: FigureOnField;
   position: XY;
 
-  constructor(figure: RotatableFigure, initialPosition: XY) {
+  constructor(figure: FigureOnField, initialPosition: XY) {
     this.figure = figure;
     this.position = initialPosition;
   }
 
   createMove(_d: XY): Move {
-    throw new Error("Method not implemented.");
+    throw new Error("Method not implemented.2");
   }
 }
 
@@ -123,7 +77,7 @@ class Game {
   }
 
   createNextFallingFigure(): MovableFigure {
-    return new MovableFigure(new RotatableFigure(FigureTemplate.O), {
+    return new MovableFigure(new FigureOnField(Figure.O), {
       x: 1,
       y: 3,
     });
