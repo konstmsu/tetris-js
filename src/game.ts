@@ -7,9 +7,11 @@ export class Field {
   data: Cell[][];
   fallingFigure: FallingFigure;
 
-  constructor(width: number, height: number) {
-    this.data = range(height).map((_y) => range(width).map((_x) => " "));
-    this.fallingFigure = new FallingFigure();
+  constructor(size: { width: number; height: number }) {
+    this.data = range(size.width).map((_y) =>
+      range(size.height).map((_x) => " ")
+    );
+    this.fallingFigure = new FallingFigure(this);
   }
 
   get height(): number {
@@ -34,16 +36,12 @@ export class Field {
     this.fallingFigure.rotation = 0;
 
     // Finding center...
-    const blocks = [...this.fallingFigure.blocks];
-    const xs = blocks.map((b) => b.x);
-    const ys = blocks.map((b) => b.y);
 
-    const figureWidth = max(xs)! - min(xs)! + 1;
-    const figureHeight = max(ys)! - min(ys)! + 1;
+    const figureDims = getFigureDimensions(this.fallingFigure);
 
     this.fallingFigure.offset = {
-      x: floor((this.width - figureWidth) / 2),
-      y: this.height - figureHeight,
+      x: floor((this.width - figureDims.width) / 2),
+      y: this.height - figureDims.height,
     };
   };
 
@@ -55,10 +53,26 @@ export class Field {
   };
 }
 
+// TODO Support rotation
+const getFigureDimensions = (
+  figure: FallingFigure
+): { width: number; height: number } => {
+  const blocks = [...figure.blocks];
+  const xs = blocks.map((b) => b.x);
+  const ys = blocks.map((b) => b.y);
+
+  return { width: max(xs)! - min(xs)! + 1, height: max(ys)! - min(ys)! + 1 };
+};
+
 export class FallingFigure {
+  field: Field;
   figure?: Figure;
   rotation = 0;
-  offset: XY = { x: 0, y: 0 };
+  offset = { x: 0, y: 0 };
+
+  constructor(field: Field) {
+    this.field = field;
+  }
 
   get blocks(): XY[] {
     if (this.figure === undefined) return [];
@@ -73,7 +87,16 @@ export class FallingFigure {
     if (this.figure === undefined) throw Error("No figure");
     const { x, y } = this.offset;
     if (y === 0) return false;
-    this.offset = { x: x + d.x, y: y + d.y };
+    const desiredOffset = {
+      x: x + d.x,
+      y: y + d.y,
+    };
+    if (desiredOffset.x < 0) return false;
+
+    const { width: targetWidth } = getFigureDimensions(this);
+    if (desiredOffset.x > this.field.width - targetWidth) return false;
+
+    this.offset = desiredOffset;
     return true;
   }
 }
@@ -100,6 +123,9 @@ export class Game {
           break;
         case "KeyD":
           tryMove({ x: 1, y: 0 });
+          break;
+        case "KeyS":
+          tryMove({ x: 0, y: -1 });
           break;
       }
     });
