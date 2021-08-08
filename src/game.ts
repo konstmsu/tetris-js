@@ -32,32 +32,7 @@ export class Field {
     return this.data[y]?.[x] ?? "*";
   };
 
-  readonly newFallingFigure = (): void => {
-    const measuredFigure = new PositionedFigure(Figure.I);
-
-    this.fallingFigure.figure = new PositionedFigure(measuredFigure.figure, {
-      rotations: 0,
-      offset: {
-        x: floor((this.size.x - measuredFigure.size.x) / 2),
-        y: this.size.y - measuredFigure.size.y,
-      },
-    });
-  };
-
-  readonly mergeFallingFigure = (): void => {
-    if (this.fallingFigure.figure === undefined)
-      throw new Error("No falling figure");
-
-    for (const block of this.fallingFigure.figure.blocks) {
-      this.setCell(block, "*");
-    }
-
-    this.fallingFigure.figure = undefined;
-
-    this.clearFullLines();
-  };
-
-  private clearFullLines = (): void => {
+  clearFullLines = (): void => {
     // TODO refactor
     const fullLineIndexes = range(this.size.y)
       .map((y) => ({
@@ -94,6 +69,30 @@ export class FallingFigure {
     this.figure = desired;
     return true;
   }
+
+  readonly spawn = (): void => {
+    const measuredFigure = new PositionedFigure(Figure.I);
+
+    this.figure = new PositionedFigure(measuredFigure.figure, {
+      rotations: 0,
+      offset: {
+        x: floor((this.field.size.x - measuredFigure.size.x) / 2),
+        y: this.field.size.y - measuredFigure.size.y,
+      },
+    });
+  };
+
+  readonly merge = (): void => {
+    if (this.figure === undefined) throw new Error("No falling figure");
+
+    for (const block of this.figure.blocks) {
+      this.field.setCell(block, "*");
+    }
+
+    this.figure = undefined;
+
+    this.field.clearFullLines();
+  };
 }
 
 export class Game {
@@ -103,7 +102,7 @@ export class Game {
   constructor(field: Field, onFieldChanged: () => void) {
     this.field = field;
     this.onFieldChanged = onFieldChanged;
-    this.field.newFallingFigure();
+    this.field.fallingFigure.spawn();
   }
 
   startKeyboardProcessing = (): void => {
@@ -138,8 +137,8 @@ export class Game {
           offset: { x: 0, y: -1 },
         })
       ) {
-        this.field.mergeFallingFigure();
-        this.field.newFallingFigure();
+        this.field.fallingFigure.merge();
+        this.field.fallingFigure.spawn();
       }
       this.onFieldChanged();
     }
