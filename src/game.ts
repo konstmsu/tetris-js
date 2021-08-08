@@ -1,4 +1,4 @@
-import { every, floor, max, min, pullAt, range } from "lodash";
+import { every, floor, max, min, pullAt, range, some } from "lodash";
 import { Cell, XY } from "./core";
 import { Figure } from "./figure";
 import { delay } from "./utils";
@@ -93,13 +93,23 @@ export class FallingFigure {
     this.field = field;
   }
 
-  get blocks(): XY[] {
+  private getBlocksAt(offset: XY) {
     if (this.figure === undefined) return [];
     return this.figure.blocks.map(({ x, y }) => ({
-      x: x + this.offset.x,
-      y: y + this.offset.y,
+      x: x + offset.x,
+      y: y + offset.y,
     }));
   }
+
+  get blocks(): XY[] {
+    return this.getBlocksAt(this.offset);
+  }
+
+  isValidPosition = (offset: XY): boolean => {
+    const blocks = this.getBlocksAt(offset);
+    if (some(blocks, (p) => this.field.getCell(p) === "*")) return false;
+    return true;
+  };
 
   tryMove(d: XY): boolean {
     console.log({ d, ...this });
@@ -114,6 +124,8 @@ export class FallingFigure {
 
     const { width: targetWidth } = getFigureDimensions(this);
     if (desiredOffset.x > this.field.width - targetWidth) return false;
+
+    if (!this.isValidPosition(desiredOffset)) return false;
 
     this.offset = desiredOffset;
     return true;
