@@ -10,7 +10,7 @@ export class Field {
 
   constructor({ size }: { size: XY }) {
     this.size = size;
-    this.data = range(size.y).map((_y) => this.createEmptyLine());
+    this.data = range(size.y).map(() => this.createEmptyLine());
     this.fallingFigure = new FallingFigure(this);
   }
 
@@ -142,7 +142,7 @@ export class Game {
     this.field.newFallingFigure();
   }
 
-  startKeyboardProcessing = () => {
+  startKeyboardProcessing = (): void => {
     const tryMove = (d: XY) => {
       if (this.field.fallingFigure.tryMove(d)) this.onFieldChanged();
     };
@@ -162,7 +162,7 @@ export class Game {
     });
   };
 
-  startFalling = async () => {
+  startFalling = async (): Promise<void> => {
     for (;;) {
       await delay(1000);
       if (!this.field.fallingFigure.tryMove({ x: 0, y: -1 })) {
@@ -173,7 +173,7 @@ export class Game {
     }
   };
 
-  start = () => {
+  start = (): void => {
     this.startFalling();
     this.startKeyboardProcessing();
     this.onFieldChanged();
