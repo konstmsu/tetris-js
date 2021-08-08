@@ -12,15 +12,15 @@ export class Field {
     this.fallingFigure = new FallingFigure();
   }
 
-  get height() {
+  get height(): number {
     return this.data.length;
   }
 
-  get width() {
+  get width(): number {
     return this.data[0]!.length;
   }
 
-  readonly setCell = ({ y, x }: XY, value: Cell) => {
+  readonly setCell = ({ y, x }: XY, value: Cell): void => {
     this.data[y]![x] = value;
   };
 
@@ -28,7 +28,7 @@ export class Field {
     return this.data[y]?.[x] ?? "*";
   };
 
-  readonly newFallingFigure = () => {
+  readonly newFallingFigure = (): void => {
     const figure = Figure.O;
     this.fallingFigure.figure = figure;
     this.fallingFigure.rotation = 0;
@@ -47,7 +47,7 @@ export class Field {
     };
   };
 
-  readonly mergeFallingFigure = () => {
+  readonly mergeFallingFigure = (): void => {
     for (const block of this.fallingFigure.blocks) {
       this.setCell(block, "*");
     }
@@ -57,7 +57,7 @@ export class Field {
 
 export class FallingFigure {
   figure?: Figure;
-  rotation: number = 0;
+  rotation = 0;
   offset: XY = { x: 0, y: 0 };
 
   get blocks(): XY[] {
@@ -95,10 +95,10 @@ export class Game {
 
     document.addEventListener("keypress", (e) => {
       switch (e.code) {
-        case "A":
+        case "KeyA":
           tryMove({ x: -1, y: 0 });
           break;
-        case "D":
+        case "KeyD":
           tryMove({ x: 1, y: 0 });
           break;
       }
