@@ -4,7 +4,7 @@ import { Figure } from "./figure";
 import { delay } from "./utils";
 
 export class Field {
-  size: XY;
+  readonly size: XY;
   data: Cell[][];
   fallingFigure: FallingFigure;
 
@@ -17,11 +17,11 @@ export class Field {
   createEmptyLine = (): Cell[] => range(this.size.x).map(() => " ");
 
   get height(): number {
-    return this.data.length;
+    return this.size.y;
   }
 
   get width(): number {
-    return this.data[0]!.length;
+    return this.size.x;
   }
 
   readonly setCell = ({ y, x }: XY, value: Cell): void => {
