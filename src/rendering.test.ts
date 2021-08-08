@@ -3,7 +3,7 @@ import { renderAsLines } from "./rendering";
 
 describe("rendering", () => {
   test("as text", () => {
-    const field = new Field({ height: 6, width: 5 });
+    const field = new Field({ size: { y: 6, x: 5 } });
     expect(renderAsLines(field)).toStrictEqual([
       "--------",
       "|      |",

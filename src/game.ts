@@ -1,18 +1,20 @@
-import { floor, max, min, range } from "lodash";
+import { every, floor, max, min, pullAt, range } from "lodash";
 import { Cell, XY } from "./core";
 import { Figure } from "./figure";
 import { delay } from "./utils";
 
 export class Field {
+  size: XY;
   data: Cell[][];
   fallingFigure: FallingFigure;
 
-  constructor(size: { width: number; height: number }) {
-    this.data = range(size.width).map((_y) =>
-      range(size.height).map((_x) => " ")
-    );
+  constructor({ size }: { size: XY }) {
+    this.size = size;
+    this.data = range(size.y).map((_y) => this.createEmptyLine());
     this.fallingFigure = new FallingFigure(this);
   }
+
+  createEmptyLine = (): Cell[] => range(this.size.x).map(() => " ");
 
   get height(): number {
     return this.data.length;
@@ -49,7 +51,24 @@ export class Field {
     for (const block of this.fallingFigure.blocks) {
       this.setCell(block, "*");
     }
+
     this.fallingFigure.figure = undefined;
+
+    const fullLineIndexes = range(this.height)
+      .map((y) => ({
+        y,
+        isFull: every(range(this.width), (x) => this.getCell({ x, y }) === "*"),
+      }))
+      .filter(({ isFull }) => isFull)
+      .map(({ y }) => y);
+
+    console.log(`Removing`, fullLineIndexes);
+    pullAt(this.data, fullLineIndexes);
+    const newData = [
+      ...this.data,
+      ...fullLineIndexes.map(this.createEmptyLine),
+    ];
+    this.data = newData;
   };
 }
 
