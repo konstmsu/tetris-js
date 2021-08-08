@@ -11,7 +11,7 @@ export class LineRenderer {
     );
 
     for (const { x, y } of this.field.fallingFigure.figure?.blocks ?? []) {
-      body[y]![x] = "*";
+      if (this.field.isWithin({ x, y })) body[y]![x] = "*";
     }
 
     body.reverse();

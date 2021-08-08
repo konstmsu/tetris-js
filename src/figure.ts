@@ -1,21 +1,43 @@
-import { max, min, some } from "lodash";
+import { some } from "lodash";
 import { XY } from "./core";
 import { Field } from "./game";
+import { getSize } from "./utils";
 
 export class Figure {
   readonly blocks: ReadonlyArray<XY>;
+  readonly size: XY;
 
   constructor(...baseViewLines: string[]) {
+    baseViewLines.reverse();
     this.blocks = baseViewLines
       .flatMap((line, y) => [...line].map((c, x) => ({ c, x, y })))
       .filter(({ c }) => c === "*")
       .map(({ x, y }) => ({ x, y }));
+    this.size = getSize(this.blocks);
   }
 
-  static T = new Figure("***", " *");
-  static O = new Figure("**", "**");
-  static S = new Figure("**", " **");
-  static I = new Figure("****");
+  static T = new Figure(
+    "***", //
+    " *"
+  );
+  static O = new Figure(
+    "**", //
+    "**"
+  );
+  static S = new Figure(
+    " **", //
+    "**"
+  );
+  static Z = new Figure(
+    "**", //
+    " **"
+  );
+  static I = new Figure(
+    "*", //
+    "*",
+    "*",
+    "*"
+  );
 }
 
 export interface Position {
@@ -34,15 +56,23 @@ export class PositionedFigure {
       offset: { x: 0, y: 0 },
     }
   ) {
-    this.blocks = figure.blocks.map(({ x, y }) => ({
-      x: x + this.position.offset.x,
-      y: y + this.position.offset.y,
-    }));
-
-    const xs = this.blocks.map((b) => b.x);
-    const ys = this.blocks.map((b) => b.y);
-
-    this.size = { x: max(xs)! - min(xs)! + 1, y: max(ys)! - min(ys)! + 1 };
+    const applyRotation = ({ x, y }: XY): XY => {
+      switch (this.position.rotations) {
+        case 0:
+          return { x, y };
+        case 1:
+          return { x: y, y: figure.size.x - x };
+      }
+      throw new Error("Unsupported rotation");
+    };
+    const applyOffset = ({ x, y }: XY): XY => {
+      return {
+        x: x + this.position.offset.x,
+        y: y + this.position.offset.y,
+      };
+    };
+    this.blocks = figure.blocks.map(applyRotation).map(applyOffset);
+    this.size = getSize(this.blocks);
   }
 
   moved = (d: Position): PositionedFigure => {
