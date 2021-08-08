@@ -1,4 +1,3 @@
-import { max } from "lodash";
 import { XY } from "./core";
 
 export class Figure {

@@ -60,8 +60,8 @@ export class FallingFigure {
   rotation: number = 0;
   offset: XY = { x: 0, y: 0 };
 
-  get blocks(): Iterable<XY> {
-    if (this.figure === undefined) throw new Error("no figure");
+  get blocks(): XY[] {
+    if (this.figure === undefined) return [];
     return this.figure.blocks.map(({ x, y }) => ({
       x: x + this.offset.x,
       y: y + this.offset.y,
