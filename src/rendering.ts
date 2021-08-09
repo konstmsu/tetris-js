@@ -1,19 +1,18 @@
 import { range, repeat } from "lodash";
-import { Cell } from "./core";
 import { Field } from "./game";
 
 export class LineRenderer {
   constructor(public readonly field: Field) {}
 
-  private renderBody = (): Cell[][] => {
+  private renderBody = (): string[][] => {
     const body = range(this.field.size.y).map((y) =>
-      range(this.field.size.x).map((x) => this.field.getCell({ x, y }))
+      range(this.field.size.x).map((x) => <string>this.field.getCell({ x, y }))
     );
 
     for (const { x, y } of this.field.fallingFigure.figure?.blocks ?? []) {
       const line = body[y];
       if (line === undefined) throw new Error(`No line at ${y}`);
-      line[x] = "*";
+      line[x] = "#";
     }
 
     body.reverse();
