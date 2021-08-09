@@ -1,4 +1,4 @@
-import { every, floor, pullAt, range } from "lodash";
+import { every, floor, pullAt, range, sample } from "lodash";
 import { Cell, XY } from "./core";
 import { Figure, Position, PositionedFigure } from "./figure";
 import { delay } from "./utils";
@@ -73,7 +73,9 @@ export class FallingFigure {
   }
 
   readonly spawn = (): void => {
-    const measuredFigure = new PositionedFigure(Figure.I);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const figure = sample([Figure.I, Figure.O, Figure.S, Figure.T, Figure.Z])!;
+    const measuredFigure = new PositionedFigure(figure);
 
     this.figure = new PositionedFigure(measuredFigure.figure, {
       rotations: 0,
