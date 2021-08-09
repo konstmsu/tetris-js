@@ -11,7 +11,9 @@ export class LineRenderer {
     );
 
     for (const { x, y } of this.field.fallingFigure.figure?.blocks ?? []) {
-      if (this.field.isWithin({ x, y })) body[y]![x] = "*";
+      const line = body[y];
+      if (line === undefined) throw new Error(`No line at ${y}`);
+      line[x] = "*";
     }
 
     body.reverse();

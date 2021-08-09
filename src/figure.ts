@@ -1,38 +1,55 @@
-import { some } from "lodash";
+import { max, min, range, some } from "lodash";
 import { XY } from "./core";
 import { Field } from "./game";
-import { getSize } from "./utils";
 
 export class Figure {
-  readonly blocks: ReadonlyArray<XY>;
   readonly size: XY;
 
-  constructor(...baseViewLines: string[]) {
-    baseViewLines.reverse();
-    this.blocks = baseViewLines
+  constructor(public readonly blocks: ReadonlyArray<XY>) {
+    const xs = blocks.map((b) => b.x);
+    const ys = blocks.map((b) => b.y);
+
+    const minX = min(xs);
+    if (minX !== 0) throw new Error(`minX should be 0, got ${minX}`);
+
+    const minY = min(ys);
+    if (minY !== 0) throw new Error(`minY should be 0, got ${minY}`);
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.size = { x: max(xs)! + 1, y: max(ys)! + 1 };
+  }
+
+  static fromLines = (...baseViewLines: string[]): Figure => {
+    const blocks = baseViewLines
       .flatMap((line, y) => [...line].map((c, x) => ({ c, x, y })))
       .filter(({ c }) => c === "*")
       .map(({ x, y }) => ({ x, y }));
-    this.size = getSize(this.blocks);
-  }
 
-  static T = new Figure(
+    return new Figure(blocks);
+  };
+
+  rotated = (): Figure =>
+    new Figure(
+      this.blocks.map(({ x, y }) => ({ y: x, x: this.size.y - y - 1 }))
+    );
+
+  static T = Figure.fromLines(
     "***", //
     " *"
   );
-  static O = new Figure(
+  static O = Figure.fromLines(
     "**", //
     "**"
   );
-  static S = new Figure(
+  static S = Figure.fromLines(
     " **", //
     "**"
   );
-  static Z = new Figure(
+  static Z = Figure.fromLines(
     "**", //
     " **"
   );
-  static I = new Figure(
+  static I = Figure.fromLines(
     "*", //
     "*",
     "*",
@@ -47,7 +64,7 @@ export interface Position {
 
 export class PositionedFigure {
   readonly blocks: ReadonlyArray<XY>;
-  readonly size: XY;
+  readonly rotatedFigure: Figure;
 
   constructor(
     public readonly figure: Figure,
@@ -56,26 +73,21 @@ export class PositionedFigure {
       offset: { x: 0, y: 0 },
     }
   ) {
-    const applyRotation = ({ x, y }: XY): XY => {
-      switch (this.position.rotations) {
-        case 0:
-          return { x, y };
-        case 1:
-          return { x: y, y: figure.size.x - x };
-      }
-      throw new Error("Unsupported rotation");
-    };
-    const applyOffset = ({ x, y }: XY): XY => {
-      return {
-        x: x + this.position.offset.x,
-        y: y + this.position.offset.y,
-      };
-    };
-    this.blocks = figure.blocks.map(applyRotation).map(applyOffset);
-    this.size = getSize(this.blocks);
+    this.rotatedFigure = range(position.rotations).reduce(
+      (f) => f.rotated(),
+      figure
+    );
+    this.blocks = this.rotatedFigure.blocks.map(({ x, y }) => ({
+      x: x + this.position.offset.x,
+      y: y + this.position.offset.y,
+    }));
   }
 
-  moved = (d: Position): PositionedFigure => {
+  get size(): XY {
+    return this.rotatedFigure.size;
+  }
+
+  transformed = (d: Position): PositionedFigure => {
     return new PositionedFigure(this.figure, {
       rotations: this.position.rotations + d.rotations,
       offset: {

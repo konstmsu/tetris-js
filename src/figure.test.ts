@@ -4,15 +4,15 @@ import { LineRenderer } from "./rendering";
 
 describe("figure", () => {
   test("rotation", () => {
-    const renderRotation = (figure2: Figure, rotations: number) => {
-      const figure = new PositionedFigure(figure2, {
+    const renderRotation = (baseFigure: Figure, rotations: number) => {
+      const figure = new PositionedFigure(baseFigure, {
         rotations,
         offset: { x: 0, y: 0 },
       });
       const field = new Field({ size: figure.size });
       field.fallingFigure.figure = figure;
       const renderer = new LineRenderer(field);
-      return renderer.renderWithoutBorders();
+      return renderer.renderWithoutBorders().reverse();
     };
 
     expect(renderRotation(Figure.T, 0)).toStrictEqual([
@@ -73,7 +73,7 @@ describe("figure", () => {
     ]);
 
     expect(renderRotation(Figure.Z, 0)).toStrictEqual([
-      "**", //
+      "** ", //
       " **",
     ]);
     expect(renderRotation(Figure.Z, 1)).toStrictEqual([
@@ -82,7 +82,7 @@ describe("figure", () => {
       "* ",
     ]);
     expect(renderRotation(Figure.Z, 2)).toStrictEqual([
-      "**", //
+      "** ", //
       " **",
     ]);
     expect(renderRotation(Figure.Z, 3)).toStrictEqual([

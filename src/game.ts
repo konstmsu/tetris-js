@@ -25,7 +25,9 @@ export class Field {
   };
 
   readonly setCell = ({ y, x }: XY, value: Cell): void => {
-    this.data[y]![x] = value;
+    const line = this.data[y];
+    if (line === undefined) throw new Error(`No line at ${y}`);
+    line[x] = value;
   };
 
   readonly getCell = ({ x, y }: XY): Cell => {
@@ -62,9 +64,9 @@ export class FallingFigure {
     this.field = field;
   }
 
-  tryMove(d: Position): boolean {
+  tryTransform(d: Position): boolean {
     if (this.figure === undefined) throw Error("No figure");
-    const desired = this.figure.moved(d);
+    const desired = this.figure.transformed(d);
     if (!desired.isValid(this.field)) return false;
     this.figure = desired;
     return true;
@@ -107,7 +109,7 @@ export class Game {
 
   startKeyboardProcessing = (): void => {
     const tryMove = (d: Position) => {
-      if (this.field.fallingFigure.tryMove(d)) this.onFieldChanged();
+      if (this.field.fallingFigure.tryTransform(d)) this.onFieldChanged();
     };
 
     document.addEventListener("keypress", (e) => {
@@ -132,7 +134,7 @@ export class Game {
     for (;;) {
       await delay(1000);
       if (
-        !this.field.fallingFigure.tryMove({
+        !this.field.fallingFigure.tryTransform({
           rotations: 0,
           offset: { x: 0, y: -1 },
         })
