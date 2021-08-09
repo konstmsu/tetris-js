@@ -57,11 +57,18 @@ export class Field {
 }
 
 export class FallingFigure {
-  field: Field;
-  figure?: PositionedFigure;
+  _figure?: PositionedFigure;
 
-  constructor(field: Field) {
-    this.field = field;
+  constructor(readonly field: Field) {}
+
+  get figure(): PositionedFigure | undefined {
+    return this._figure;
+  }
+
+  set figure(value: PositionedFigure | undefined) {
+    if (value !== undefined && !value.isValid(this.field))
+      throw new Error(`Figure must be valid`);
+    this._figure = value;
   }
 
   tryTransform(d: Position): boolean {
