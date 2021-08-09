@@ -1,4 +1,4 @@
-import { max, min, range, some } from "lodash";
+import { floor, max, min, range, sample, some } from "lodash";
 import { XY } from "./core";
 import { Field } from "./game";
 
@@ -101,5 +101,55 @@ export class PositionedFigure {
     if (some(this.blocks, (p) => !field.isWithin(p))) return false;
     if (some(this.blocks, (p) => field.getCell(p) === "*")) return false;
     return true;
+  };
+}
+
+export class FallingFigure {
+  _figure?: PositionedFigure;
+
+  constructor(readonly field: Field) {}
+
+  get figure(): PositionedFigure | undefined {
+    return this._figure;
+  }
+
+  set figure(value: PositionedFigure | undefined) {
+    if (value !== undefined && !value.isValid(this.field))
+      throw new Error(`Figure must be valid`);
+    this._figure = value;
+  }
+
+  tryTransform(d: Position): boolean {
+    if (this.figure === undefined) throw Error("No figure");
+    const desired = this.figure.transformed(d);
+    if (!desired.isValid(this.field)) return false;
+    this.figure = desired;
+    return true;
+  }
+
+  readonly spawn = (): void => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const figure = sample([Figure.I, Figure.O, Figure.S, Figure.T, Figure.Z])!;
+    const measuredFigure = new PositionedFigure(figure);
+
+    this.figure = new PositionedFigure(measuredFigure.figure, {
+      rotations: 0,
+      offset: {
+        x: floor((this.field.size.x - measuredFigure.size.x) / 2),
+        y: this.field.size.y - measuredFigure.size.y,
+      },
+    });
+  };
+
+  readonly merge = (): void => {
+    if (this.figure === undefined) throw new Error("No falling figure");
+
+    for (const block of this.figure.blocks) {
+      this.field.setCell(block, "*");
+    }
+
+    this.figure = undefined;
+
+    this.field.clearFullLines();
   };
 }
