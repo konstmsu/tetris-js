@@ -1,4 +1,4 @@
-import { every, pullAt, range } from "lodash";
+import { every, pullAt, range, times } from "lodash";
 import { Cell, XY } from "./core";
 import { FallingFigure, Position } from "./figure";
 import { delay } from "./utils";
@@ -6,15 +6,14 @@ import { delay } from "./utils";
 export class Field {
   readonly size: XY;
   data: Cell[][];
-  fallingFigure: FallingFigure;
+  readonly fallingFigure: FallingFigure = new FallingFigure(this);
 
   constructor({ size }: { size: XY }) {
     this.size = size;
-    this.data = range(size.y).map(() => this.createEmptyLine());
-    this.fallingFigure = new FallingFigure(this);
+    this.data = times(size.y, () => this.createEmptyLine());
   }
 
-  createEmptyLine = (): Cell[] => range(this.size.x).map(() => " ");
+  createEmptyLine = (): Cell[] => times(this.size.x, () => " ");
 
   isWithin = ({ x, y }: XY): boolean => {
     if (x < 0) return false;
