@@ -108,4 +108,20 @@ describe("figure", () => {
       "##",
     ]);
   });
+
+  test("rotate in tight spaces", () => {
+    const field = new Field({ size: { x: 4, y: 4 } });
+    field.fallingFigure.figure = new PositionedFigure(Figure.I, {
+      offset: { x: 3, y: 0 },
+      rotations: 0,
+    });
+    const renderer = new LineRenderer(field);
+    expect(field.fallingFigure.tryRotateOnce()).toStrictEqual(true);
+    expect(renderer.renderWithoutBorders()).toStrictEqual([
+      "    ",
+      "    ",
+      "    ",
+      "####",
+    ]);
+  });
 });

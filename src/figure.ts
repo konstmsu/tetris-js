@@ -106,7 +106,7 @@ export class PositionedFigure {
 }
 
 export class FallingFigure {
-  _figure?: PositionedFigure;
+  private _figure?: PositionedFigure;
 
   constructor(readonly field: Field) {}
 
@@ -120,6 +120,14 @@ export class FallingFigure {
     this._figure = value;
   }
 
+  tryRotateOnce(): boolean {
+    for (const x of [0, -1, -2, -3])
+      if (this.tryTransform({ offset: { x, y: 0 }, rotations: 1 })) return true;
+
+    return false;
+  }
+
+  // TODO make private
   tryTransform(d: Position): boolean {
     if (this.figure === undefined) throw Error("No figure");
     const desired = this.figure.transformed(d);
