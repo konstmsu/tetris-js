@@ -12,7 +12,7 @@ describe("figure", () => {
       const field = new Field({ size: figure.size });
       field.fallingFigure.figure = figure;
       const renderer = new LineRenderer(field);
-      return renderer.renderWithoutBorders().reverse();
+      return renderer.renderWithoutBorders();
     };
 
     expect(renderRotation(Figure.T, 0)).toStrictEqual([

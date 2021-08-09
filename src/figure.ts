@@ -21,6 +21,7 @@ export class Figure {
 
   static fromLines = (...baseViewLines: string[]): Figure => {
     const blocks = baseViewLines
+      .reverse()
       .flatMap((line, y) => [...line].map((c, x) => ({ c, x, y })))
       .filter(({ c }) => c === "*")
       .map(({ x, y }) => ({ x, y }));
@@ -30,7 +31,7 @@ export class Figure {
 
   rotated = (): Figure =>
     new Figure(
-      this.blocks.map(({ x, y }) => ({ y: x, x: this.size.y - y - 1 }))
+      this.blocks.map(({ x, y }) => ({ x: y, y: this.size.x - x - 1 }))
     );
 
   static T = Figure.fromLines(
