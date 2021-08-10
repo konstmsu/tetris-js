@@ -109,16 +109,25 @@ export class Game {
   };
 
   startFalling = async (): Promise<void> => {
-    for (;;) {
-      this.#dropNow = new Deferred();
-      await Promise.any([
-        delay(this.#isDropping ? 100 : 1000),
-        this.#dropNow.promise,
-      ]);
-      if (this.field.isGameOver) break;
+    const drop = async () => {
       const { merged } = this.field.fallingFigure.drop();
       this.onFieldChanged();
-      if (merged) await delay(300);
+      if (merged) await delay(100);
+    };
+
+    for (;;) {
+      this.#dropNow = new Deferred();
+      let isFirstForcedDrop = false;
+      await Promise.any([
+        delay(this.#isDropping ? 80 : 700),
+        (async () => {
+          await this.#dropNow.promise;
+          isFirstForcedDrop = true;
+        })(),
+      ]);
+      if (this.field.isGameOver) break;
+      await drop();
+      if (isFirstForcedDrop) await delay(200);
     }
   };
 
