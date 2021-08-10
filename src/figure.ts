@@ -100,7 +100,7 @@ export class PositionedFigure {
 
   isValid = (field: Field): boolean => {
     if (some(this.blocks, (p) => !field.isWithin(p))) return false;
-    if (some(this.blocks, (p) => field.getCell(p) === "*")) return false;
+    if (some(this.blocks, (p) => field.getCell(p) !== " ")) return false;
     return true;
   };
 }
