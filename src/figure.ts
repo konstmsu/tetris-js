@@ -124,6 +124,9 @@ export class FallingFigure {
     for (const x of [0, -1, -2, -3])
       if (this.tryTransform({ offset: { x, y: 0 }, rotations: 1 })) return true;
 
+    for (const y of [-1, -2])
+      if (this.tryTransform({ offset: { x: 0, y }, rotations: 1 })) return true;
+
     return false;
   }
 

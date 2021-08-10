@@ -125,6 +125,20 @@ describe("figure", () => {
     ]);
   });
 
+  test("rotate when just spawned", () => {
+    const field = new Field({ size: { x: 3, y: 3 } });
+    field.fallingFigure.spawn(Figure.T);
+    const renderer = new LineRenderer(field);
+    expect(field.fallingFigure.tryRotateOnce()).toStrictEqual(true);
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  " # ",
+  "## ",
+  " # ",
+]
+`);
+  });
+
   test("moveX", () => {
     const field = new Field({ size: { x: 4, y: 2 } });
     field.fallingFigure.spawn(Figure.T);
