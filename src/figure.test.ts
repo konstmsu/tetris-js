@@ -109,7 +109,7 @@ describe("figure", () => {
     ]);
   });
 
-  test("rotate in tight spaces", () => {
+  test("rotate too close to wall", () => {
     const field = new Field({ size: { x: 4, y: 4 } });
     field.fallingFigure.figure = new PositionedFigure(Figure.I, {
       offset: { x: 3, y: 0 },
