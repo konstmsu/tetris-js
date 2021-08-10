@@ -68,6 +68,8 @@ export class Game {
 
   startKeyboardProcessing = (): void => {
     const processInput = (e: KeyboardEvent): boolean => {
+      if (this.field.isGameOver) return false;
+
       switch (e.code) {
         case "KeyA":
           return this.field.fallingFigure.tryMoveX(-1);
@@ -89,16 +91,15 @@ export class Game {
 
   startFalling = async (): Promise<void> => {
     for (;;) {
-      await delay(1000);
-      this.field.fallingFigure.tryDrop();
       this.onFieldChanged();
+      await delay(1000);
       if (this.field.isGameOver) break;
+      this.field.fallingFigure.tryDrop();
     }
   };
 
   start = (): void => {
     this.startFalling();
     this.startKeyboardProcessing();
-    this.onFieldChanged();
   };
 }
