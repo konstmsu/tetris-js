@@ -57,6 +57,7 @@ export class Field {
 
 export class Game {
   field: Field;
+  isGameOver = false;
   onFieldChanged: () => void;
 
   constructor(field: Field, onFieldChanged: () => void) {
@@ -89,7 +90,7 @@ export class Game {
   };
 
   startFalling = async (): Promise<void> => {
-    for (;;) {
+    while (!this.isGameOver) {
       await delay(1000);
       if (
         !this.field.fallingFigure.tryTransform({
@@ -99,6 +100,8 @@ export class Game {
       ) {
         this.field.fallingFigure.merge();
         this.field.fallingFigure.spawn();
+        if (this.field.fallingFigure.figure === undefined)
+          this.isGameOver = true;
       }
       this.onFieldChanged();
     }

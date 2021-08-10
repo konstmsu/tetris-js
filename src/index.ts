@@ -8,7 +8,9 @@ const main = async () => {
   const game = new Game(field, () => {
     const fieldElement = document.getElementById("field");
     if (fieldElement === null) throw new Error(`Could not find field element`);
-    fieldElement.textContent = renderer.renderWithBorders().join("\n");
+    fieldElement.textContent = game.isGameOver
+      ? "Game Over\nRefresh page to restart"
+      : renderer.renderWithBorders().join("\n");
   });
   game.start();
 };
