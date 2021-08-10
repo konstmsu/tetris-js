@@ -67,25 +67,27 @@ export class Game {
   }
 
   startKeyboardProcessing = (): void => {
-    const tryMove = (d: Position) => {
-      if (this.field.fallingFigure.tryTransform(d)) this.onFieldChanged();
+    const processInput = (e: KeyboardEvent): boolean => {
+      const tryMove = (d: Position) => {
+        return this.field.fallingFigure.tryTransform(d);
+      };
+
+      switch (e.code) {
+        case "KeyA":
+          return tryMove({ rotations: 0, offset: { x: -1, y: 0 } });
+        case "KeyD":
+          return tryMove({ rotations: 0, offset: { x: 1, y: 0 } });
+        case "KeyS":
+          return tryMove({ rotations: 0, offset: { x: 0, y: -1 } });
+        case "KeyW":
+          return this.field.fallingFigure.tryRotateOnce();
+      }
+
+      return false;
     };
 
     document.addEventListener("keypress", (e) => {
-      switch (e.code) {
-        case "KeyA":
-          tryMove({ rotations: 0, offset: { x: -1, y: 0 } });
-          break;
-        case "KeyD":
-          tryMove({ rotations: 0, offset: { x: 1, y: 0 } });
-          break;
-        case "KeyS":
-          tryMove({ rotations: 0, offset: { x: 0, y: -1 } });
-          break;
-        case "KeyW":
-          tryMove({ rotations: 1, offset: { x: 0, y: 0 } });
-          break;
-      }
+      if (processInput(e)) this.onFieldChanged();
     });
   };
 
