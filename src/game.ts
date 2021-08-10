@@ -1,6 +1,6 @@
 import { every, pullAt, range, times } from "lodash";
 import { Cell, XY } from "./core";
-import { FallingFigure, Position } from "./figure";
+import { FallingFigure } from "./figure";
 import { delay } from "./utils";
 
 export class Field {
@@ -68,15 +68,13 @@ export class Game {
 
   startKeyboardProcessing = (): void => {
     const processInput = (e: KeyboardEvent): boolean => {
-      const tryMove = (d: Position) => {
-        return this.field.fallingFigure.tryTransform(d);
-      };
+      const tryMove = this.field.fallingFigure.tryTransform;
 
       switch (e.code) {
         case "KeyA":
-          return tryMove({ rotations: 0, offset: { x: -1, y: 0 } });
+          return this.field.fallingFigure.tryMoveX(-1);
         case "KeyD":
-          return tryMove({ rotations: 0, offset: { x: 1, y: 0 } });
+          return this.field.fallingFigure.tryMoveX(1);
         case "KeyS":
           return tryMove({ rotations: 0, offset: { x: 0, y: -1 } });
         case "KeyW":

@@ -127,6 +127,10 @@ export class FallingFigure {
     return false;
   }
 
+  tryMoveX = (dx: number): boolean => {
+    return this.tryTransform({ offset: { x: dx, y: 0 }, rotations: 0 });
+  };
+
   // TODO make private
   tryTransform(d: Position): boolean {
     if (this.figure === undefined) throw Error("No figure");
@@ -136,15 +140,16 @@ export class FallingFigure {
     return true;
   }
 
-  readonly spawn = (): void => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const figure = sample([Figure.I, Figure.O, Figure.S, Figure.T, Figure.Z])!;
-    const measuredFigure = new PositionedFigure(figure);
-    const desiredFigure = new PositionedFigure(measuredFigure.figure, {
+  readonly spawn = (figure?: Figure): void => {
+    if (figure === undefined)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      figure = sample([Figure.I, Figure.O, Figure.S, Figure.T, Figure.Z])!;
+
+    const desiredFigure = new PositionedFigure(figure, {
       rotations: 0,
       offset: {
-        x: floor((this.field.size.x - measuredFigure.size.x) / 2),
-        y: this.field.size.y - measuredFigure.size.y,
+        x: floor((this.field.size.x - figure.size.x) / 2),
+        y: this.field.size.y - figure.size.y,
       },
     });
 

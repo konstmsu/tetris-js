@@ -124,4 +124,26 @@ describe("figure", () => {
       "####",
     ]);
   });
+
+  test("moveX", () => {
+    const field = new Field({ size: { x: 4, y: 2 } });
+    field.fallingFigure.spawn(Figure.T);
+
+    const renderer = new LineRenderer(field);
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  "### ",
+  " #  ",
+]
+`);
+
+    expect(field.fallingFigure.tryMoveX(1)).toStrictEqual(true);
+
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  " ###",
+  "  # ",
+]
+`);
+  });
 });
