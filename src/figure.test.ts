@@ -146,4 +146,41 @@ Array [
 ]
 `);
   });
+
+  test("drop", () => {
+    const field = new Field({ size: { x: 3, y: 3 } });
+    field.fallingFigure.spawn(Figure.S);
+
+    const renderer = new LineRenderer(field);
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  " ##",
+  "## ",
+  "   ",
+]
+`);
+
+    expect(field.fallingFigure.tryDrop()).toStrictEqual(true);
+
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  "   ",
+  " ##",
+  "## ",
+]
+`);
+
+    expect(field.fallingFigure.tryDrop()).toStrictEqual(true);
+
+    expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
+Array [
+  "   ",
+  " **",
+  "** ",
+]
+`);
+
+    expect(field.fallingFigure.figure).toBe(undefined);
+    expect(field.isGameOver).toBe(true);
+  });
 });

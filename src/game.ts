@@ -7,6 +7,7 @@ export class Field {
   readonly size: XY;
   data: Cell[][];
   readonly fallingFigure: FallingFigure = new FallingFigure(this);
+  isGameOver = false;
 
   constructor({ size }: { size: XY }) {
     this.size = size;
@@ -57,7 +58,6 @@ export class Field {
 
 export class Game {
   field: Field;
-  isGameOver = false;
   onFieldChanged: () => void;
 
   constructor(field: Field, onFieldChanged: () => void) {
@@ -68,15 +68,13 @@ export class Game {
 
   startKeyboardProcessing = (): void => {
     const processInput = (e: KeyboardEvent): boolean => {
-      const tryMove = this.field.fallingFigure.tryTransform;
-
       switch (e.code) {
         case "KeyA":
           return this.field.fallingFigure.tryMoveX(-1);
         case "KeyD":
           return this.field.fallingFigure.tryMoveX(1);
         case "KeyS":
-          return tryMove({ rotations: 0, offset: { x: 0, y: -1 } });
+          return this.field.fallingFigure.tryDrop();
         case "KeyW":
           return this.field.fallingFigure.tryRotateOnce();
       }
@@ -90,20 +88,11 @@ export class Game {
   };
 
   startFalling = async (): Promise<void> => {
-    while (!this.isGameOver) {
+    for (;;) {
       await delay(1000);
-      if (
-        !this.field.fallingFigure.tryTransform({
-          rotations: 0,
-          offset: { x: 0, y: -1 },
-        })
-      ) {
-        this.field.fallingFigure.merge();
-        this.field.fallingFigure.spawn();
-        if (this.field.fallingFigure.figure === undefined)
-          this.isGameOver = true;
-      }
+      this.field.fallingFigure.tryDrop();
       this.onFieldChanged();
+      if (this.field.isGameOver) break;
     }
   };
 

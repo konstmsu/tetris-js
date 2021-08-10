@@ -131,6 +131,16 @@ export class FallingFigure {
     return this.tryTransform({ offset: { x: dx, y: 0 }, rotations: 0 });
   };
 
+  tryDrop = (): boolean => {
+    if (this.tryTransform({ offset: { x: 0, y: -1 }, rotations: 0 }))
+      return true;
+
+    this.merge();
+    this.spawn();
+
+    return true;
+  };
+
   // TODO make private
   tryTransform(d: Position): boolean {
     if (this.figure === undefined) throw Error("No figure");
@@ -154,6 +164,7 @@ export class FallingFigure {
     });
 
     if (desiredFigure.isValid(this.field)) this.figure = desiredFigure;
+    else this.field.isGameOver = true;
   };
 
   readonly merge = (): void => {
