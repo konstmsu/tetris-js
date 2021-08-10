@@ -160,7 +160,7 @@ Array [
 ]
 `);
 
-    expect(field.fallingFigure.tryDrop()).toStrictEqual(true);
+    expect(field.fallingFigure.drop()).toStrictEqual({ merged: false });
 
     expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
 Array [
@@ -170,7 +170,7 @@ Array [
 ]
 `);
 
-    expect(field.fallingFigure.tryDrop()).toStrictEqual(true);
+    expect(field.fallingFigure.drop()).toStrictEqual({ merged: true });
 
     expect(renderer.renderWithoutBorders()).toMatchInlineSnapshot(`
 Array [

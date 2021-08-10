@@ -1,7 +1,7 @@
 import { every, pullAt, range, times } from "lodash";
 import { Cell, XY } from "./core";
 import { FallingFigure } from "./figure";
-import { delay } from "./utils";
+import { Deferred, delay } from "./utils";
 
 export class Field {
   readonly size: XY;
@@ -59,6 +59,8 @@ export class Field {
 export class Game {
   field: Field;
   onFieldChanged: () => void;
+  #dropNow = new Deferred<void>();
+  #isDropping = false;
 
   constructor(field: Field, onFieldChanged: () => void) {
     this.field = field;
@@ -75,8 +77,6 @@ export class Game {
           return this.field.fallingFigure.tryMoveX(-1);
         case "KeyD":
           return this.field.fallingFigure.tryMoveX(1);
-        case "KeyS":
-          return this.field.fallingFigure.tryDrop();
         case "KeyW":
           return this.field.fallingFigure.tryRotateOnce();
       }
@@ -87,18 +87,43 @@ export class Game {
     document.addEventListener("keypress", (e) => {
       if (processInput(e)) this.onFieldChanged();
     });
+
+    document.addEventListener("keydown", (e) => {
+      switch (e.code) {
+        case "KeyS":
+          if (!this.#isDropping) {
+            this.#dropNow.resolve();
+            this.#isDropping = true;
+          }
+          break;
+      }
+    });
+
+    document.addEventListener("keyup", (e) => {
+      switch (e.code) {
+        case "KeyS":
+          this.#isDropping = false;
+          break;
+      }
+    });
   };
 
   startFalling = async (): Promise<void> => {
     for (;;) {
-      this.onFieldChanged();
-      await delay(1000);
+      this.#dropNow = new Deferred();
+      await Promise.any([
+        delay(this.#isDropping ? 100 : 1000),
+        this.#dropNow.promise,
+      ]);
       if (this.field.isGameOver) break;
-      this.field.fallingFigure.tryDrop();
+      const { merged } = this.field.fallingFigure.drop();
+      this.onFieldChanged();
+      if (merged) await delay(300);
     }
   };
 
   start = (): void => {
+    this.onFieldChanged();
     this.startFalling();
     this.startKeyboardProcessing();
   };

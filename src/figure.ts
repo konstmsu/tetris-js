@@ -131,14 +131,14 @@ export class FallingFigure {
     return this.tryTransform({ offset: { x: dx, y: 0 }, rotations: 0 });
   };
 
-  tryDrop = (): boolean => {
+  drop = (): { merged: boolean } => {
     if (this.tryTransform({ offset: { x: 0, y: -1 }, rotations: 0 }))
-      return true;
+      return { merged: false };
 
     this.merge();
     this.spawn();
 
-    return true;
+    return { merged: true };
   };
 
   // TODO make private
