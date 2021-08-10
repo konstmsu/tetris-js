@@ -2,7 +2,7 @@ import { Field, Game } from "./game";
 import { LineRenderer } from "./rendering";
 
 const main = async () => {
-  const field = new Field({ size: { x: 6, y: 8 } });
+  const field = new Field({ size: { x: 8, y: 10 } });
   const renderer = new LineRenderer(field);
 
   const game = new Game(field, () => {
