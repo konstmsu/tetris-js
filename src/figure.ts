@@ -38,6 +38,14 @@ export class Figure {
     "***", //
     " *"
   );
+  static L = Figure.fromLines(
+    "***", //
+    "*  "
+  );
+  static J = Figure.fromLines(
+    "***", //
+    "  *"
+  );
   static O = Figure.fromLines(
     "**", //
     "**"
@@ -56,6 +64,10 @@ export class Figure {
     "*",
     "*"
   );
+
+  static get All(): Figure[] {
+    return [this.I, this.J, this.L, this.O, this.S, this.T, this.Z];
+  }
 }
 
 export interface Position {
@@ -156,7 +168,7 @@ export class FallingFigure {
   readonly spawn = (figure?: Figure): void => {
     if (figure === undefined)
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      figure = sample([Figure.I, Figure.O, Figure.S, Figure.T, Figure.Z])!;
+      figure = sample(Figure.All)!;
 
     const desiredFigure = new PositionedFigure(figure, {
       rotations: 0,
