@@ -1,4 +1,7 @@
+<% const os = require("os") %>
 <body>
   <pre id="field" style="line-height: 0.8em"></pre>
-  <p>Built at <%= new Date().toISOString() %></p>
+  <p style="position: absolute; bottom: 0">
+    Built at <%= new Date().toISOString() %> on <%= os.hostname %>
+  </p>
 </body>
