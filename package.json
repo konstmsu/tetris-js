@@ -14,6 +14,8 @@
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.172",
+    "@types/node": "^16.6.1",
+    "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "eslint": "^7.32.0",
@@ -21,6 +23,7 @@
     "jest": "^27.0.6",
     "ts-jest": "^27.0.4",
     "ts-loader": "^9.2.5",
+    "ts-node": "^10.2.0",
     "typescript": "^4.3.5",
     "webpack": "^5.49.0",
     "webpack-cli": "^4.7.2"

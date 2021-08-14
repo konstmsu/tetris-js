@@ -1,7 +1,7 @@
-const path = require("path");
-const ESLintPlugin = require("eslint-webpack-plugin");
+import path from "path";
+import ESLintPlugin from "eslint-webpack-plugin";
 
-module.exports = {
+export default {
   entry: "./src/index.ts",
   mode: "development",
   devtool: "inline-source-map",
