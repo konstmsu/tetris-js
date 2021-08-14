@@ -2,7 +2,7 @@ import path from "path";
 import ESLintPlugin from "eslint-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
-export default {
+const config = {
   entry: "./src/index.ts",
   mode: "development",
   devtool: "inline-source-map",
@@ -30,3 +30,5 @@ export default {
     path: path.resolve(__dirname, "dist"),
   },
 };
+
+export default config;
