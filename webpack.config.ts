@@ -1,5 +1,6 @@
 import path from "path";
 import ESLintPlugin from "eslint-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 export default {
   entry: "./src/index.ts",
@@ -17,7 +18,13 @@ export default {
   resolve: {
     extensions: [".ts", ".js"],
   },
-  plugins: [new ESLintPlugin({ extensions: ["js", "ts"] })],
+  plugins: [
+    new ESLintPlugin({ extensions: ["js", "ts"] }),
+    new HtmlWebpackPlugin({
+      title: "Tetris",
+      favicon: "favicon.ico",
+    }),
+  ],
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
